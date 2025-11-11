@@ -219,7 +219,6 @@ export default auto(function TabUsers (props) {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => {
-        const userId = getRowKey(record)
         const isAdmin = record.role === USER_ROLES.ADMIN
         const isPrimaryAdmin = record.username === 'admin'
         return (
