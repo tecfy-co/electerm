@@ -3,7 +3,7 @@
  */
 
 import handleError from '../common/error-handler'
-import { Modal } from 'antd'
+import { Modal, message } from 'antd'
 import { debounce, some, get } from 'lodash-es'
 import {
   modals,
@@ -279,6 +279,32 @@ export default Store => {
       return
     }
     window.store.aiChatHistory.splice(index, 1)
+  }
+
+  Store.prototype.logout = async function () {
+    const { store } = window
+    const token = store.sessionToken || window.pre.sessionToken
+    try {
+      if (token) {
+        await window.pre.runGlobalAsync('authLogout', token)
+      }
+      message.success(e('logout'))
+    } catch (err) {
+      store.onError(err)
+    } finally {
+      window.pre.sessionToken = ''
+      window.pre.authState = null
+      window.pre.requireAuth = true
+      store.sessionToken = ''
+      store.currentUser = null
+      store.permissions = {
+        allowAll: false,
+        categoryIds: [],
+        bookmarkIds: []
+      }
+      store.authState = null
+      window.location.reload()
+    }
   }
 
   Store.prototype.getLangName = function (

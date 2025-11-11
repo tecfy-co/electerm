@@ -6,7 +6,8 @@ import {
   PlusCircleOutlined,
   SettingOutlined,
   UpCircleOutlined,
-  BarsOutlined
+  BarsOutlined,
+  LogoutOutlined
 } from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import SideBarPanel from './sidebar-panel'
@@ -209,6 +210,14 @@ export default function Sidebar (props) {
           <InfoCircleOutlined
             className='iblock font16 control-icon open-about-icon'
             onClick={openAbout}
+          />
+        </SideIcon>
+        <SideIcon
+          title={e('logout')}
+        >
+          <LogoutOutlined
+            className='iblock font20 control-icon'
+            onClick={store.logout}
           />
         </SideIcon>
         {

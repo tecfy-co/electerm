@@ -41,6 +41,10 @@ class MenuBtn extends PureComponent {
     window.store.openSetting()
   }
 
+  logout = () => {
+    window.store.logout()
+  }
+
   openDevTools = () => {
     window.pre.runGlobalAsync('openDevTools')
   }
@@ -139,6 +143,11 @@ class MenuBtn extends PureComponent {
         func: 'openDevTools',
         icon: 'LeftSquareFilled',
         text: e('toggledevtools')
+      },
+      {
+        func: 'logout',
+        icon: 'LogoutOutlined',
+        text: e('logout')
       },
       // {
       //   type: 'hr'
