@@ -281,7 +281,7 @@ export default Store => {
     window.store.aiChatHistory.splice(index, 1)
   }
 
-  Store.prototype.logout = async function () {
+  Store.prototype.handleLogout = async function () {
     const { store } = window
     const token = store.sessionToken || window.pre.sessionToken
     try {

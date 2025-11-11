@@ -217,7 +217,7 @@ export default function Sidebar (props) {
         >
           <LogoutOutlined
             className='iblock font20 control-icon'
-            onClick={store.logout}
+            onClick={store.handleLogout}
           />
         </SideIcon>
         {

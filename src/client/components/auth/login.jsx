@@ -118,7 +118,7 @@ export default function Login () {
       message.success(`Welcome, ${result.user.username}`)
     } catch (err) {
       setLoading(false)
-      const msg = (err?.message || 'Login failed').replace(/^Error invoking remote method '.*?':\s*/i, '')
+      const msg = err?.message || 'Login failed'
       message.error(msg)
     } finally {
       setSubmitting(false)
