@@ -18,8 +18,18 @@ import newTerm from '../common/new-terminal'
 import settingList from '../common/setting-list'
 
 const e = window.translate
+const ADMIN_ONLY_MESSAGE = 'Admin permissions required'
 
 export default Store => {
+  function ensureAdmin () {
+    const { store } = window
+    if (!store.isAdminUser) {
+      message.warning(ADMIN_ONLY_MESSAGE)
+      return false
+    }
+    return true
+  }
+
   Store.prototype.setConfig = function (conf) {
     const { store } = window
     Object.assign(
@@ -36,6 +46,9 @@ export default Store => {
 
   Store.prototype.openBookmarkEdit = function (item) {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     store.storeAssign({
       settingTab: settingMap.bookmarks
     })
@@ -45,6 +58,9 @@ export default Store => {
 
   Store.prototype.handleOpenQuickCommandsSetting = function () {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     store.storeAssign({
       settingTab: settingMap.quickCommands
     })
@@ -84,6 +100,9 @@ export default Store => {
 
   Store.prototype.openSetting = function () {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     if (
       store.settingTab === settingMap.setting &&
       store.settingItem.id === settingCommonId &&
@@ -100,6 +119,9 @@ export default Store => {
 
   Store.prototype.openSettingSync = function () {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     if (
       store.settingTab === settingMap.setting &&
       store.settingItem.id === settingList()[0].id &&
@@ -116,6 +138,9 @@ export default Store => {
 
   Store.prototype.openTerminalThemes = function () {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     if (
       store.settingTab === settingMap.terminalThemes &&
       store.settingItem.id === ''
@@ -131,6 +156,9 @@ export default Store => {
 
   Store.prototype.openSettingModal = function () {
     const { store } = window
+    if (!ensureAdmin()) {
+      return
+    }
     if (store.isSecondInstance) {
       return message.warning(
         e('sencondInstanceTip')

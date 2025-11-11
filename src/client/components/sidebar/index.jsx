@@ -122,20 +122,27 @@ export default function Sidebar (props) {
     transferTab,
     transferHistory
   }
+  const isAdmin = store.isAdminUser
   return (
     <div {...sidebarProps}>
       <div className='sidebar-bar btns'>
         <div className='control-icon-wrap'>
           <MenuBtn store={store} config={store.config} />
         </div>
-        <SideIcon
-          title={e('newBookmark')}
-        >
-          <PlusCircleOutlined
-            className='font22 iblock control-icon'
-            onClick={onNewSsh}
-          />
-        </SideIcon>
+        {
+          isAdmin
+            ? (
+              <SideIcon
+                title={e('newBookmark')}
+              >
+                <PlusCircleOutlined
+                  className='font22 iblock control-icon'
+                  onClick={onNewSsh}
+                />
+              </SideIcon>
+              )
+            : null
+        }
         <SideIcon
           title={e(settingMap.bookmarks)}
           active={bookmarksActive}
@@ -146,31 +153,49 @@ export default function Sidebar (props) {
           />
         </SideIcon>
         <TransferList {...transferProps} />
-        <SideIcon
-          title={e(settingMap.terminalThemes)}
-          active={themeActive}
-        >
-          <PictureOutlined
-            className='font20 iblock pointer control-icon'
-            onClick={openTerminalThemes}
-          />
-        </SideIcon>
-        <SideIcon
-          title={e(settingMap.setting)}
-          active={settingActive}
-        >
-          <SettingOutlined className='iblock font20 control-icon' onClick={openSetting} />
-        </SideIcon>
-        <SideIcon
-          title={e('settingSync')}
-          active={syncActive}
-        >
-          <CloudSyncOutlined
-            className='iblock font20 control-icon'
-            onClick={openSettingSync}
-            spin={isSyncingSetting}
-          />
-        </SideIcon>
+        {
+          isAdmin
+            ? (
+              <SideIcon
+                title={e(settingMap.terminalThemes)}
+                active={themeActive}
+              >
+                <PictureOutlined
+                  className='font20 iblock pointer control-icon'
+                  onClick={openTerminalThemes}
+                />
+              </SideIcon>
+              )
+            : null
+        }
+        {
+          isAdmin
+            ? (
+              <SideIcon
+                title={e(settingMap.setting)}
+                active={settingActive}
+              >
+                <SettingOutlined className='iblock font20 control-icon' onClick={openSetting} />
+              </SideIcon>
+              )
+            : null
+        }
+        {
+          isAdmin
+            ? (
+              <SideIcon
+                title={e('settingSync')}
+                active={syncActive}
+              >
+                <CloudSyncOutlined
+                  className='iblock font20 control-icon'
+                  onClick={openSettingSync}
+                  spin={isSyncingSetting}
+                />
+              </SideIcon>
+              )
+            : null
+        }
         <SideIcon
           title={e('batchOp')}
           active={showBatchOp}

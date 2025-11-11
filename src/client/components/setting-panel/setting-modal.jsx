@@ -24,6 +24,10 @@ export default auto(function SettingModalWrap (props) {
     window.store.setSettingItem(item)
   }
 
+  if (!props.store.isAdminUser) {
+    return null
+  }
+
   function renderTabs () {
     const { store } = props
     const tabsShouldConfirmDel = [

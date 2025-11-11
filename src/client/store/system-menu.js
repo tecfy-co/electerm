@@ -2,7 +2,7 @@
  * system menu functions
  */
 
-import { Modal } from 'antd'
+import { Modal, message } from 'antd'
 import { isString } from 'lodash-es'
 import getInitItem from '../common/init-setting-item'
 import {
@@ -12,6 +12,7 @@ import {
 } from '../common/constants'
 
 const e = window.translate
+const ADMIN_ONLY_MESSAGE = 'Admin permissions required'
 
 export default Store => {
   Store.prototype.zoom = function (level = 1, plus = false, zoomOnly) {
@@ -54,6 +55,9 @@ export default Store => {
 
   Store.prototype.onNewSsh = function () {
     const { store } = window
+    if (!store.isAdminUser) {
+      return message.warning(ADMIN_ONLY_MESSAGE)
+    }
     store.storeAssign({
       settingTab: settingMap.bookmarks
     })

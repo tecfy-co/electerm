@@ -20,6 +20,9 @@ class MenuBtn extends PureComponent {
   }
 
   onNewSsh = () => {
+    if (!window.store.isAdminUser) {
+      return
+    }
     window.store.onNewSsh()
   }
 
@@ -32,6 +35,9 @@ class MenuBtn extends PureComponent {
   }
 
   openSetting = () => {
+    if (!window.store.isAdminUser) {
+      return
+    }
     window.store.openSetting()
   }
 
@@ -64,13 +70,16 @@ class MenuBtn extends PureComponent {
   }
 
   renderContext = () => {
+    const isAdmin = window.store.isAdminUser
     const items = [
-      {
-        func: 'onNewSsh',
-        icon: 'CodeFilled',
-        text: e('newBookmark'),
-        subText: this.getShortcut('app_newBookmark')
-      }
+      ...(isAdmin
+        ? [{
+            func: 'onNewSsh',
+            icon: 'CodeFilled',
+            text: e('newBookmark'),
+            subText: this.getShortcut('app_newBookmark')
+          }]
+        : [])
     ]
     if (window.store.hasNodePty) {
       items.push({
@@ -82,12 +91,14 @@ class MenuBtn extends PureComponent {
     // {
     //   type: 'hr'
     // },
-    items.push({
-      noCloseMenu: true,
-      icon: 'BookOutlined',
-      text: e('bookmarks'),
-      submenu: 'Bookmark'
-    })
+    if (isAdmin) {
+      items.push({
+        noCloseMenu: true,
+        icon: 'BookOutlined',
+        text: e('bookmarks'),
+        submenu: 'Bookmark'
+      })
+    }
     items.push(
       {
         noCloseMenu: true,
@@ -101,11 +112,13 @@ class MenuBtn extends PureComponent {
         text: e('sessions'),
         submenu: 'Tabs'
       },
-      {
-        icon: 'AppstoreOutlined',
-        text: e('layout'),
-        submenu: 'Layout'
-      },
+      ...(isAdmin
+        ? [{
+            icon: 'AppstoreOutlined',
+            text: e('layout'),
+            submenu: 'Layout'
+          }]
+        : []),
       // {
       //   type: 'hr'
       // },
@@ -114,11 +127,13 @@ class MenuBtn extends PureComponent {
         icon: 'InfoCircleOutlined',
         text: e('about')
       },
-      {
-        func: 'openSetting',
-        icon: 'SettingOutlined',
-        text: e('settings')
-      },
+      ...(isAdmin
+        ? [{
+            func: 'openSetting',
+            icon: 'SettingOutlined',
+            text: e('settings')
+          }]
+        : []),
       {
         func: 'openDevTools',
         icon: 'LeftSquareFilled',
