@@ -120,4 +120,3 @@ module.exports = {
   filterGroupsResult,
   filterBookmarksResult
 }
-

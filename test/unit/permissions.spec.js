@@ -36,4 +36,3 @@ describe('permissions helpers', () => {
     expect(filtered.map(b => b._id)).toEqual(['b0', 'b1', 'b2'])
   })
 })
-

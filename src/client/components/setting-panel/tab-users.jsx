@@ -17,8 +17,6 @@ import { USER_ROLES } from '../../common/user-roles'
 import { settingMap } from '../../common/constants'
 import createTitle from '../../common/create-title'
 import SettingCol from './col'
-
-const e = window.translate
 const { Text } = Typography
 
 const roleOptions = [
@@ -169,11 +167,11 @@ export default auto(function TabUsers (props) {
   }
 
   const handleDeleteUser = async (user) => {
-    const userId = getRowKey(user)
-    if (!userId) {
+    const id = getRowKey(user)
+    if (!id) {
       return
     }
-    await store.removeUserAccount(userId)
+    await store.removeUserAccount(id)
   }
 
   const columns = [
@@ -388,54 +386,55 @@ export default auto(function TabUsers (props) {
         onOk={handlePermissionsSave}
         destroyOnClose
       >
-        {permissionsLoading ? (
-          <div className='pd2 aligncenter'>Loading permissions…</div>
-        ) : (
-          <Form layout='vertical'>
-            <Form.Item label='Allow access to all categories and bookmarks'>
-              <Switch
-                checked={permissionsState.allowAll}
-                onChange={(checked) => setPermissionsState(prev => ({
-                  ...prev,
-                  allowAll: checked
-                }))}
-              />
-            </Form.Item>
-            {!permissionsState.allowAll && (
-              <>
-                <Form.Item label='Allowed Categories'>
-                  <Select
-                    mode='multiple'
-                    value={permissionsState.categoryIds}
-                    options={categoryOptions}
-                    onChange={(values) => setPermissionsState(prev => ({
-                      ...prev,
-                      categoryIds: values
-                    }))}
-                    placeholder='Select categories'
-                    allowClear
-                  />
-                </Form.Item>
-                <Form.Item label='Allowed Bookmarks'>
-                  <Select
-                    mode='multiple'
-                    value={permissionsState.bookmarkIds}
-                    options={bookmarkOptions}
-                    onChange={(values) => setPermissionsState(prev => ({
-                      ...prev,
-                      bookmarkIds: values
-                    }))}
-                    placeholder='Select specific bookmarks'
-                    allowClear
-                    showSearch
-                  />
-                </Form.Item>
-              </>
+        {permissionsLoading
+          ? (
+            <div className='pd2 aligncenter'>Loading permissions…</div>
+            )
+          : (
+            <Form layout='vertical'>
+              <Form.Item label='Allow access to all categories and bookmarks'>
+                <Switch
+                  checked={permissionsState.allowAll}
+                  onChange={(checked) => setPermissionsState(prev => ({
+                    ...prev,
+                    allowAll: checked
+                  }))}
+                />
+              </Form.Item>
+              {!permissionsState.allowAll && (
+                <>
+                  <Form.Item label='Allowed Categories'>
+                    <Select
+                      mode='multiple'
+                      value={permissionsState.categoryIds}
+                      options={categoryOptions}
+                      onChange={(values) => setPermissionsState(prev => ({
+                        ...prev,
+                        categoryIds: values
+                      }))}
+                      placeholder='Select categories'
+                      allowClear
+                    />
+                  </Form.Item>
+                  <Form.Item label='Allowed Bookmarks'>
+                    <Select
+                      mode='multiple'
+                      value={permissionsState.bookmarkIds}
+                      options={bookmarkOptions}
+                      onChange={(values) => setPermissionsState(prev => ({
+                        ...prev,
+                        bookmarkIds: values
+                      }))}
+                      placeholder='Select specific bookmarks'
+                      allowClear
+                      showSearch
+                    />
+                  </Form.Item>
+                </>
+              )}
+            </Form>
             )}
-          </Form>
-        )}
       </Modal>
     </div>
   )
 })
-

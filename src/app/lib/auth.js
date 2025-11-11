@@ -157,17 +157,6 @@ async function recordFailedAttempt (user) {
   }
 }
 
-async function resetFailedAttempts (user) {
-  if (!(user.failedAttempts || user.lockedUntil)) {
-    return user
-  }
-  return upsertUser({
-    ...user,
-    failedAttempts: 0,
-    lockedUntil: null
-  })
-}
-
 async function refreshLastLogin (user) {
   return upsertUser({
     ...user,

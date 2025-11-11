@@ -50,4 +50,3 @@ module.exports = async () => {
   await updateDBVersion(versionTo)
   log.info(`Done: upgrading to v${versionTo}`)
 }
-

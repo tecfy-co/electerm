@@ -69,9 +69,6 @@ const lookup = require('../common/lookup')
 const { AIchat, getStreamContent } = require('./ai')
 const { USER_ROLES } = require('../common/user-roles')
 const {
-  toArray,
-  toOriginalShape,
-  computeAllowedGroupIds,
   filterGroupsResult,
   filterBookmarksResult
 } = require('./permissions')

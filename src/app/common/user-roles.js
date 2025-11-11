@@ -15,4 +15,3 @@ module.exports = {
   DEFAULT_SESSION_EXPIRY_MINUTES,
   ADMIN_USERNAME
 }
-
