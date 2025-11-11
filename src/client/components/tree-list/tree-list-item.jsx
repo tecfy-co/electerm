@@ -26,12 +26,16 @@ import './tree-list.styl'
 const e = window.translate
 
 export default function TreeListItem (props) {
+  const { readOnly } = props
   const handleDel = (e) => {
+    if (readOnly) {
+      return
+    }
     props.del(props.item, e)
   }
 
   const renderDelBtn = (item) => {
-    if (props.item.id === defaultBookmarkGroupId || props.staticList) {
+    if (readOnly || props.item.id === defaultBookmarkGroupId || props.staticList) {
       return null
     }
     return (
@@ -48,7 +52,7 @@ export default function TreeListItem (props) {
   }
 
   const renderOperationBtn = (item, isGroup) => {
-    if (props.staticList || props.item.id === defaultBookmarkGroupId) {
+    if (readOnly || props.staticList || props.item.id === defaultBookmarkGroupId) {
       return null
     }
     return (
@@ -64,19 +68,28 @@ export default function TreeListItem (props) {
   }
 
   const openMoveModal = (e) => {
+    if (readOnly) {
+      return
+    }
     props.openMoveModal(e, props.item, props.isGroup)
   }
 
   const handleEditItem = (e) => {
+    if (readOnly) {
+      return
+    }
     props.editItem(e, props.item, props.isGroup)
   }
 
   const handleAddSubCat = (e) => {
+    if (readOnly) {
+      return
+    }
     props.addSubCat(e, props.item)
   }
 
   const renderAddNewSubGroupBtn = () => {
-    if (props.staticList) {
+    if (readOnly || props.staticList) {
       return null
     }
     return (
@@ -94,6 +107,7 @@ export default function TreeListItem (props) {
       isGroup, staticList
     } = props
     if (
+      readOnly ||
       (staticList && isGroup) ||
       (!staticList && !isGroup)
     ) {
@@ -136,6 +150,9 @@ export default function TreeListItem (props) {
   }
 
   const handleDuplicateItem = (e) => {
+    if (readOnly) {
+      return
+    }
     props.duplicateItem(e, props.item)
   }
 
@@ -144,7 +161,7 @@ export default function TreeListItem (props) {
       item,
       staticList
     } = props
-    if (!item.id || staticList) {
+    if (readOnly || !item.id || staticList) {
       return null
     }
     return (
@@ -164,18 +181,30 @@ export default function TreeListItem (props) {
   }
 
   const onDragOver = e => {
+    if (readOnly) {
+      return
+    }
     props.onDragOver(e)
   }
 
   const onDragStart = e => {
+    if (readOnly) {
+      return
+    }
     props.onDragStart(e)
   }
 
   const onDragLeave = e => {
+    if (readOnly) {
+      return
+    }
     props.onDragLeave(e)
   }
 
   const onDrop = e => {
+    if (readOnly) {
+      return
+    }
     props.onDrop(e)
   }
 

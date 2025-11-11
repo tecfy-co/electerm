@@ -22,12 +22,20 @@ const wsDec = require('./ws-dec')
 const { tokenElecterm } = process.env
 
 function verify (req) {
-  const { token: to } = req.query
+  const { token: to, sessionToken } = req.query
   if (to !== tokenElecterm) {
     throw new Error('not valid request')
   }
-  if (process.env.requireAuth === 'yes' && !globalState.authed) {
-    throw new Error('auth required')
+  if (process.env.requireAuth === 'yes') {
+    const session = globalState.getSession(sessionToken)
+    if (!session) {
+      throw new Error('auth required')
+    }
+    if (session.expiresAt && Number(session.expiresAt) <= Date.now()) {
+      globalState.removeSession(sessionToken)
+      throw new Error('session expired')
+    }
+    req.session = session
   }
 }
 

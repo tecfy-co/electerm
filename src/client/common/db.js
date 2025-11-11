@@ -16,7 +16,8 @@ import { encObj, decObj } from './pass-enc'
  * @param  {...any} args
  */
 const dbAction = (...args) => {
-  return window.pre.runGlobalAsync('dbAction', ...args)
+  const sessionToken = window.store?.sessionToken || window.pre.sessionToken
+  return window.pre.runGlobalAsync('dbAction', sessionToken, ...args)
     .catch(handleError)
 }
 
@@ -25,12 +26,14 @@ const dbAction = (...args) => {
  */
 export const dbNames = without(
   Object.keys(settingMap),
-  settingMap.setting
+  settingMap.setting,
+  settingMap.users
 )
 
 export const dbNamesForWatch = without(
   Object.keys(settingMap),
-  settingMap.setting
+  settingMap.setting,
+  settingMap.users
 )
 
 /**

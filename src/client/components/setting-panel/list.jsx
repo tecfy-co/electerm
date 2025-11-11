@@ -24,6 +24,10 @@ export default class ItemList extends React.PureComponent {
     pageSize: 10
   }
 
+  get isReadOnly () {
+    return window.store?.isReadOnlyUser
+  }
+
   componentDidMount () {
     this.timer = setTimeout(() => {
       this.setState({
@@ -65,6 +69,9 @@ export default class ItemList extends React.PureComponent {
   }
 
   renderDelBtn = item => {
+    if (this.isReadOnly) {
+      return null
+    }
     if (!item.id || [settingSyncId, settingCommonId].includes(item.id) || item.id.startsWith('default')) {
       return null
     }
@@ -99,6 +106,9 @@ export default class ItemList extends React.PureComponent {
   renderNewItem () {
     const { type } = this.props
 
+    if (this.isReadOnly) {
+      return null
+    }
     if (!staticNewItemTabs.has(type)) {
       return null
     }
@@ -151,6 +161,9 @@ export default class ItemList extends React.PureComponent {
   }
 
   renderEditBtn = (item, isGroup) => {
+    if (this.isReadOnly) {
+      return null
+    }
     if (
       (this.props.staticList && isGroup) ||
       (!this.props.staticList && !isGroup)

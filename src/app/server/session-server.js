@@ -1,4 +1,5 @@
 const express = require('express')
+const axios = require('axios')
 const { Sftp } = require('./session-sftp')
 const { Ftp } = require('./session-ftp')
 const {
@@ -31,22 +32,50 @@ const {
   tokenElecterm,
   electermHost,
   wsPort,
-  type
+  type,
+  electermPort
 } = process.env
 
-function verify (req) {
-  const { token: to } = req.query
+axios.defaults.proxy = false
+
+async function validateSessionToken (sessionToken) {
+  if (!process.env.requireAuth || process.env.requireAuth !== 'yes') {
+    return null
+  }
+  if (!sessionToken) {
+    throw new Error('auth required')
+  }
+  const port = electermPort || process.env.electermPort || 5570
+  try {
+    const response = await axios.post(`http://127.0.0.1:${port}/auth/session/validate`, {
+      sessionToken
+    }, {
+      headers: {
+        token: tokenElecterm
+      }
+    })
+    return response.data.session
+  } catch (err) {
+    throw new Error('auth required')
+  }
+}
+
+async function verify (req) {
+  const { token: to, sessionToken } = req.query
   if (to !== tokenElecterm) {
     throw new Error('not valid request')
+  }
+  if (process.env.requireAuth === 'yes') {
+    await validateSessionToken(sessionToken)
   }
 }
 
 appDec(app)
 
 if (type === 'rdp') {
-  app.ws('/rdp/:pid', function (ws, req) {
+  app.ws('/rdp/:pid', async function (ws, req) {
     const { width, height } = req.query
-    verify(req)
+    await verify(req)
     const term = terminals(req.params.pid)
     term.ws = ws
     term.start(width, height)
@@ -60,9 +89,9 @@ if (type === 'rdp') {
     })
   })
 } else if (type === 'vnc') {
-  app.ws('/vnc/:pid', function (ws, req) {
+  app.ws('/vnc/:pid', async function (ws, req) {
     const { query } = req
-    verify(req)
+    await verify(req)
     const { pid } = req.params
     const term = terminals(pid)
     term.ws = ws
@@ -76,8 +105,8 @@ if (type === 'rdp') {
     })
   })
 } else {
-  app.ws('/terminals/:pid', function (ws, req) {
-    verify(req)
+  app.ws('/terminals/:pid', async function (ws, req) {
+    await verify(req)
     const term = terminals(req.params.pid)
     const { pid } = term
     log.debug('ws: connected to terminal ->', pid)
@@ -120,8 +149,8 @@ if (type === 'rdp') {
   })
 
   // sftp function
-  app.ws('/sftp/:id', (ws, req) => {
-    verify(req)
+  app.ws('/sftp/:id', async (ws, req) => {
+    await verify(req)
     wsDec(ws)
     const { id } = req.params
     ws.on('close', () => {
@@ -170,8 +199,8 @@ if (type === 'rdp') {
   })
 
   // transfer function
-  app.ws('/transfer/:id', (ws, req) => {
-    verify(req)
+  app.ws('/transfer/:id', async (ws, req) => {
+    await verify(req)
     wsDec(ws)
     const { id } = req.params
     const { sftpId } = req.query

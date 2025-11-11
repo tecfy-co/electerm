@@ -151,6 +151,23 @@ export default (Store) => {
     store.exePath = globs.exePath
     store.isPortable = globs.isPortable
     store._config = globs.config
+    const {
+      sessionToken = '',
+      currentUser = null,
+      permissions = store.permissions,
+      authState = null
+    } = globs.config || {}
+    window.pre.requireAuth = !!globs.config?.requireAuth
+    store.sessionToken = sessionToken
+    store.currentUser = currentUser
+    store.permissions = {
+      allowAll: !!permissions?.allowAll,
+      categoryIds: Array.isArray(permissions?.categoryIds) ? permissions.categoryIds : [],
+      bookmarkIds: Array.isArray(permissions?.bookmarkIds) ? permissions.bookmarkIds : []
+    }
+    store.authState = authState
+    window.pre.sessionToken = sessionToken
+    window.pre.authState = authState
     window.et.langs = globs.langs
     store.zoom(store.config.zoom, false, true)
     await initWsCommon()

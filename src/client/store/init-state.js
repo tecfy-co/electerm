@@ -48,6 +48,18 @@ export default () => {
     // common
     wsInited: false,
     configLoaded: false,
+    currentUser: null,
+    sessionToken: '',
+    authState: null,
+    permissions: {
+      allowAll: false,
+      categoryIds: [],
+      bookmarkIds: []
+    },
+    users: [],
+    usersLoading: false,
+    userPermissionsCache: new Map(),
+    userPermissionsLoading: '',
     loadTime: 0,
     lastDataUpdateTime: 0,
     tabs: [],

@@ -70,6 +70,7 @@ export default class VncSession extends RdpSession {
     const {
       host,
       tokenElecterm,
+      sessionToken,
       server = ''
     } = config
     const { id } = this.props
@@ -111,7 +112,8 @@ export default class VncSession extends RdpSession {
       : `${host}:${port}`
     const pre = server.startsWith('https') ? 'wss' : 'ws'
     const { width, height } = this.state
-    const wsUrl = `${pre}://${hs}/vnc/${pid}?token=${tokenElecterm}&width=${width}&height=${height}`
+    const sessionQuery = sessionToken ? `&sessionToken=${sessionToken}` : ''
+    const wsUrl = `${pre}://${hs}/vnc/${pid}?token=${tokenElecterm}&width=${width}&height=${height}${sessionQuery}`
     const vncOpts = {
       scaleViewport,
       viewOnly,

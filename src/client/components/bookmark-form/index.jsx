@@ -90,6 +90,9 @@ export default class BookmarkIndex2 extends PureComponent {
     const { id = '' } = formData
     const { type } = this.props
     if (type !== settingMap.bookmarks) return null
+    if (this.props.readOnly) {
+      return null
+    }
     const { ready, bookmarkType } = this.state
     if (!ready) {
       return (

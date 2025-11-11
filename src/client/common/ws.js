@@ -145,6 +145,7 @@ export default (type, id, sftpId = '', persist, port) => {
     'host',
     'port',
     'tokenElecterm',
+    'sessionToken',
     'server',
     'urlPath'
   ])

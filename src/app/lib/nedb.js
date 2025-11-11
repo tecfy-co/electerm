@@ -27,7 +27,9 @@ const tables = [
   'quickCommands',
   'log',
   'dbUpgradeLog',
-  'profiles'
+  'profiles',
+  'users',
+  'userPermissions'
 ]
 
 tables.forEach(table => {

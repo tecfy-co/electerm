@@ -23,8 +23,18 @@ const {
   migrate
 } = require('../migrate/migrate-1-to-2')
 const {
-  setPassword,
-  checkPassword
+  login,
+  logout,
+  initializeAdminPassword,
+  updateUserPassword,
+  createUser,
+  removeUser,
+  listAllUsers,
+  updateUserRole,
+  getUserPermissions,
+  setUserPermissions,
+  verifySessionToken,
+  getAuthState
 } = require('./auth')
 const initServer = require('./init-server')
 const {
@@ -57,6 +67,14 @@ const { initCommandLine } = require('./command-line')
 const { watchFile, unwatchFile } = require('./watch-file')
 const lookup = require('../common/lookup')
 const { AIchat, getStreamContent } = require('./ai')
+const { USER_ROLES } = require('../common/user-roles')
+const {
+  toArray,
+  toOriginalShape,
+  computeAllowedGroupIds,
+  filterGroupsResult,
+  filterBookmarksResult
+} = require('./permissions')
 
 async function initAppServer () {
   const {
@@ -84,6 +102,50 @@ async function initAppServer () {
     globalState.set('serverInited', true)
   }
   globalState.set('config', config)
+}
+
+async function ensureSession (token) {
+  const sessionInfo = await verifySessionToken(token)
+  if (!sessionInfo) {
+    throw new Error('Session expired')
+  }
+  return sessionInfo
+}
+
+async function ensureAdminSession (token) {
+  const sessionInfo = await ensureSession(token)
+  if (sessionInfo.user.role !== USER_ROLES.ADMIN) {
+    throw new Error('Admin privileges required')
+  }
+  return sessionInfo
+}
+
+async function securedDbAction (token, dbName, op, ...args) {
+  const sessionInfo = await ensureSession(token)
+  const { user, permissions } = sessionInfo
+  if (user.role === USER_ROLES.ADMIN) {
+    return dbAction(dbName, op, ...args)
+  }
+  if (new Set(['users', 'userPermissions']).has(dbName)) {
+    throw new Error('Insufficient permissions')
+  }
+  if (!['find', 'findOne'].includes(op)) {
+    throw new Error('Insufficient permissions')
+  }
+  if (dbName === 'bookmarks') {
+    const bookmarks = await dbAction(dbName, op, ...args)
+    const groups = await dbAction('bookmarkGroups', 'find', {})
+    return filterBookmarksResult(bookmarks, permissions, groups)
+  }
+  if (dbName === 'bookmarkGroups') {
+    const groups = await dbAction('bookmarkGroups', 'find', {})
+    if (op === 'find') {
+      return filterGroupsResult(groups, permissions, groups)
+    }
+    const group = await dbAction(dbName, op, ...args)
+    return filterGroupsResult(group, permissions, groups)
+  }
+  return dbAction(dbName, op, ...args)
 }
 
 function initIpc () {
@@ -117,8 +179,42 @@ function initIpc () {
     confirmExit: () => {
       globalState.set('confirmExit', true)
     },
-    setPassword,
-    checkPassword,
+    authLogin: login,
+    authLogout: async (token) => logout(token),
+    authGetState: getAuthState,
+    authInitializeAdminPassword: initializeAdminPassword,
+    authListUsers: async (token) => {
+      await ensureAdminSession(token)
+      return listAllUsers()
+    },
+    authCreateUser: async (token, payload) => {
+      await ensureAdminSession(token)
+      return createUser(payload || {})
+    },
+    authUpdateUserPassword: async (token, userId, password, options = {}) => {
+      await ensureAdminSession(token)
+      return updateUserPassword(userId, password, options)
+    },
+    authUpdateUserRole: async (token, userId, role) => {
+      await ensureAdminSession(token)
+      return updateUserRole(userId, role)
+    },
+    authRemoveUser: async (token, userId) => {
+      await ensureAdminSession(token)
+      return removeUser(userId)
+    },
+    authGetPermissions: async (token, userId) => {
+      const { user } = await ensureAdminSession(token)
+      if (userId === user._id) {
+        throw new Error('Use settings to manage your own permissions')
+      }
+      return getUserPermissions(userId)
+    },
+    authSetPermissions: async (token, userId, permissions) => {
+      await ensureAdminSession(token)
+      return setUserPermissions(userId, permissions || {})
+    },
+    authVerifySession: ensureSession,
     lookup,
     loadSshConfig,
     init,
@@ -134,7 +230,7 @@ function initIpc () {
     },
     encryptAsync,
     decryptAsync,
-    dbAction,
+    dbAction: securedDbAction,
     getScreenSize,
     closeApp: (closeAction = '') => {
       globalState.set('closeAction', closeAction)

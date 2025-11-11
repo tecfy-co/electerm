@@ -20,7 +20,10 @@ class GlobalState {
       watchFilePath: '',
       oldRectangle: null,
       serverPort: null,
-      isSecondInstance: false
+      isSecondInstance: false,
+      authState: null,
+      activeSession: null,
+      activeUser: null
     }
   }
 

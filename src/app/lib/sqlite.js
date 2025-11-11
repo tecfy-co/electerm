@@ -38,7 +38,9 @@ const tables = [
   'quickCommands',
   'log',
   'dbUpgradeLog',
-  'profiles'
+  'profiles',
+  'users',
+  'userPermissions'
 ]
 
 // Create tables in appropriate databases

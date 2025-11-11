@@ -3,11 +3,16 @@ import { isString, isFunction } from 'lodash-es'
 import { notification } from 'antd'
 
 function jsonHeader () {
-  return {
+  const sessionToken = window.store?.sessionToken || window.store?.config.sessionToken
+  const headers = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     token: window.store?.config.tokenElecterm
   }
+  if (sessionToken) {
+    headers['x-electerm-session'] = sessionToken
+  }
+  return headers
 }
 
 function parseResponse (response) {
@@ -18,6 +23,21 @@ function parseResponse (response) {
 
 export async function handleErr (res) {
   log.debug(res)
+  if (res && res.status === 401) {
+    notification.error({
+      message: 'Session expired',
+      description: (
+        <div className='common-err'>
+          Session expired or invalid. Please sign in again.
+        </div>
+      ),
+      duration: 8
+    })
+    setTimeout(() => {
+      window.location.reload()
+    }, 300)
+    throw new Error('Session expired')
+  }
   let text = res.message || res.statusText
   if (!isString(text)) {
     try {

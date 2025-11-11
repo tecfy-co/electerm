@@ -17,6 +17,19 @@ class GlobalState {
     delete this.#sessions[id]
   }
 
+  replaceSessions (sessions = []) {
+    this.#sessions = {}
+    for (const session of sessions) {
+      if (session && session.token) {
+        this.#sessions[session.token] = session
+      }
+    }
+  }
+
+  listSessions () {
+    return Object.values(this.#sessions)
+  }
+
   // Upgrade instances management
   getUpgradeInst (id) {
     return this.#upgradeInsts[id]

@@ -19,10 +19,13 @@ const getPort = require('./get-port')
 const globalState = require('./glob-state')
 const net = require('net')
 const generateErrorHtml = require('./error-page')
+const { getAuthState } = require('./auth')
 
 exports.createWindow = async function (userConfig) {
   globalState.set('closeAction', 'closeApp')
-  globalState.set('requireAuth', !!userConfig.hashedPassword)
+  const authState = await getAuthState()
+  globalState.set('authState', authState)
+  globalState.set('requireAuth', !!authState.requireAuth)
   const { width, height, x, y } = await getWindowSize()
   const { useSystemTitleBar = defaults.useSystemTitleBar } = userConfig
   const win = new BrowserWindow({

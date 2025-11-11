@@ -15,6 +15,7 @@ import TabQuickCommands from './tab-quick-commands'
 import TabSettings from './tab-settings'
 import TabThemes from './tab-themes'
 import TabProfiles from './tab-profiles'
+import TabUsers from './tab-users'
 
 const e = window.translate
 
@@ -32,7 +33,7 @@ export default auto(function SettingModalWrap (props) {
     const { settingTab, settingItem, settingSidebarList, bookmarkSelectMode } = store
     const props0 = {
       store,
-      activeItemId: settingItem.id,
+      activeItemId: settingItem?.id || '',
       type: settingTab,
       onClickItem: selectItem,
       shouldConfirmDel: tabsShouldConfirmDel.includes(settingTab),
@@ -94,6 +95,13 @@ export default auto(function SettingModalWrap (props) {
         children: null
       }
     ]
+    if (store.isAdminUser) {
+      items.push({
+        key: settingMap.users,
+        label: e(settingMap.users),
+        children: null
+      })
+    }
     const tabsProps = {
       activeKey: settingTab,
       animated: false,
@@ -138,6 +146,10 @@ export default auto(function SettingModalWrap (props) {
           listProps={props0}
           settingItem={settingItem}
           formProps={formProps}
+          store={store}
+          settingTab={settingTab}
+        />
+        <TabUsers
           store={store}
           settingTab={settingTab}
         />

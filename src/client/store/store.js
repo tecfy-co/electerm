@@ -24,6 +24,7 @@ import transferHistoryExtend from './transfer-history'
 import batchInputHistory from './batch-input-history'
 import transferExtend from './transfer-list'
 import addressBookmarkExtend from './address-bookmark'
+import userExtend from './user'
 import isColorDark from '../common/is-color-dark'
 import { getReverseColor } from '../common/reverse-color'
 import { uniq } from 'lodash-es'
@@ -41,6 +42,7 @@ import {
   theme
 } from 'antd'
 import { refsTabs } from '../components/common/ref'
+import { USER_ROLES } from '../common/user-roles'
 
 class Store {
   constructor () {
@@ -52,6 +54,22 @@ class Store {
 
   get width () {
     return window.store.innerWidth
+  }
+
+  get isAdminUser () {
+    const user = window.store.currentUser
+    if (!user) {
+      return true
+    }
+    return user.role === USER_ROLES.ADMIN
+  }
+
+  get isReadOnlyUser () {
+    const user = window.store.currentUser
+    if (!user) {
+      return false
+    }
+    return user.role !== USER_ROLES.ADMIN
   }
 
   get config () {
@@ -295,5 +313,6 @@ transferHistoryExtend(Store)
 batchInputHistory(Store)
 transferExtend(Store)
 addressBookmarkExtend(Store)
+userExtend(Store)
 
 export const StateStore = Store

@@ -54,6 +54,10 @@ export default class ItemListTree extends Component {
 
   onSubmitEdit = false
 
+  get readOnly () {
+    return !!(this.props.readOnly || window.store?.isReadOnlyUser)
+  }
+
   componentDidMount () {
     this.timer = setTimeout(() => {
       this.setState({
@@ -144,6 +148,9 @@ export default class ItemListTree extends Component {
   }
 
   handleSubmitEdit = () => {
+    if (this.readOnly) {
+      return
+    }
     const {
       categoryTitle,
       categoryColor,
@@ -173,6 +180,9 @@ export default class ItemListTree extends Component {
   }
 
   openMoveModal = (e, item, isGroup) => {
+    if (this.readOnly) {
+      return
+    }
     e.stopPropagation()
     this.setState({
       openMoveModal: true,
@@ -182,6 +192,9 @@ export default class ItemListTree extends Component {
   }
 
   handleChangeBookmarkGroupTitle = e => {
+    if (this.readOnly) {
+      return
+    }
     let { value } = e.target
     if (value.length > maxBookmarkGroupTitleLength) {
       value = value.slice(0, maxBookmarkGroupTitleLength)
@@ -192,6 +205,9 @@ export default class ItemListTree extends Component {
   }
 
   handleChangeBookmarkGroupColor = color => {
+    if (this.readOnly) {
+      return
+    }
     this.setState({
       bookmarkGroupColor: color
     })
@@ -204,10 +220,16 @@ export default class ItemListTree extends Component {
   }
 
   handleNewBookmark = () => {
+    if (this.readOnly) {
+      return
+    }
     this.props.onClickItem(getInitItem([], settingMap.bookmarks))
   }
 
   handleSubmit = () => {
+    if (this.readOnly) {
+      return
+    }
     if (this.onSubmit) {
       return
     }
@@ -232,6 +254,9 @@ export default class ItemListTree extends Component {
   }
 
   handleSubmitSub = () => {
+    if (this.readOnly) {
+      return
+    }
     if (this.onSubmit) {
       return
     }
@@ -244,6 +269,9 @@ export default class ItemListTree extends Component {
   }
 
   afterSubmitSub = action(() => {
+    if (this.readOnly) {
+      return
+    }
     const id = this.parentId
     this.onSubmit = false
     const { bookmarkGroups } = window.store
@@ -270,6 +298,9 @@ export default class ItemListTree extends Component {
   })
 
   handleNewBookmarkGroup = () => {
+    if (this.readOnly) {
+      return
+    }
     this.setState({
       showNewBookmarkGroupForm: true,
       bookmarkGroupTitle: '',
@@ -279,6 +310,9 @@ export default class ItemListTree extends Component {
   }
 
   del = (item, e) => {
+    if (this.readOnly) {
+      return
+    }
     e.stopPropagation()
     const { store } = window
     if (item.bookmarkIds) {
@@ -339,6 +373,9 @@ export default class ItemListTree extends Component {
   }
 
   editItem = (e, item, isGroup) => {
+    if (this.readOnly) {
+      return
+    }
     e.stopPropagation()
     if (isGroup) {
       this.setState({
@@ -353,6 +390,9 @@ export default class ItemListTree extends Component {
   }
 
   addSubCat = (e, item) => {
+    if (this.readOnly) {
+      return
+    }
     this.setState(old => {
       return {
         showNewBookmarkGroupForm: true,
@@ -581,6 +621,9 @@ export default class ItemListTree extends Component {
   }
 
   duplicateItem = (e, item) => {
+    if (this.readOnly) {
+      return
+    }
     e.stopPropagation()
     const { addItem } = window.store
     const { bookmarkGroups } = this.props
@@ -654,6 +697,7 @@ export default class ItemListTree extends Component {
       leftSidebarWidth: this.props.leftSidebarWidth,
       staticList: this.props.staticList,
       selectedItemId: this.props.activeItemId,
+      readOnly: this.readOnly,
       ...pick(
         this,
         [
@@ -685,18 +729,30 @@ export default class ItemListTree extends Component {
   }
 
   handleImport = () => {
+    if (this.readOnly) {
+      return
+    }
     document.querySelector('.upload-bookmark-icon input')?.click()
   }
 
   handleExport = () => {
+    if (this.readOnly) {
+      return
+    }
     document.querySelector('.download-bookmark-icon')?.click()
   }
 
   handleSshConfigs = () => {
+    if (this.readOnly) {
+      return
+    }
     window.store.showSshConfigModal = true
   }
 
   renderNewButtons = () => {
+    if (this.readOnly) {
+      return null
+    }
     return (
       <NewButtonsGroup
         onNewBookmark={this.handleNewBookmark}
@@ -734,6 +790,9 @@ export default class ItemListTree extends Component {
   }
 
   renderNewCat = (group) => {
+    if (this.readOnly) {
+      return null
+    }
     const {
       bookmarkGroupTitle,
       bookmarkGroupColor,

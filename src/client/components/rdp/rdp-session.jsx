@@ -64,6 +64,7 @@ export default class RdpSession extends PureComponent {
     const {
       host,
       tokenElecterm,
+      sessionToken,
       server = ''
     } = config
     const { id } = this.props
@@ -102,7 +103,8 @@ export default class RdpSession extends PureComponent {
       : `${host}:${port}`
     const pre = server.startsWith('https') ? 'wss' : 'ws'
     const { width, height } = this.state
-    const wsUrl = `${pre}://${hs}/rdp/${pid}?&token=${tokenElecterm}&width=${width}&height=${height}`
+    const sessionQuery = sessionToken ? `&sessionToken=${sessionToken}` : ''
+    const wsUrl = `${pre}://${hs}/rdp/${pid}?&token=${tokenElecterm}&width=${width}&height=${height}${sessionQuery}`
     const socket = new WebSocket(wsUrl)
     socket.onclose = this.oncloseSocket
     socket.onerror = this.onerrorSocket

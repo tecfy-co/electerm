@@ -31,5 +31,10 @@ export default (arr, tab) => {
       id: '',
       name: e(settingMap.profiles)
     }
+  } else if (tab === settingMap.users) {
+    return {
+      id: '',
+      username: ''
+    }
   }
 }

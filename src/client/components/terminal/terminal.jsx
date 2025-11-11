@@ -1130,17 +1130,19 @@ class Term extends Component {
   }
 
   buildWsUrl = (port) => {
-    const { host, tokenElecterm } = this.props.config
+    const { host, tokenElecterm, sessionToken } = this.props.config
     const { id } = this.props.tab
     if (window.et.buildWsUrl) {
       return window.et.buildWsUrl(
         host,
         port,
         tokenElecterm,
+        sessionToken,
         id
       )
     }
-    return `ws://${host}:${port}/terminals/${id}?token=${tokenElecterm}`
+    const sessionQuery = sessionToken ? `&sessionToken=${sessionToken}` : ''
+    return `ws://${host}:${port}/terminals/${id}?token=${tokenElecterm}${sessionQuery}`
   }
 
   remoteInit = async (term = this.term) => {
