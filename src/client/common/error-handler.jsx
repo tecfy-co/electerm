@@ -4,8 +4,16 @@
 
 import { notification } from 'antd'
 
-export default (e) => {
-  const { message = 'error', stack } = e
+function sanitizeMessage (msg) {
+  if (!msg) {
+    return ''
+  }
+  return msg.replace(/^Error invoking remote method '.*?':\s*/i, '')
+}
+
+export default (e = {}) => {
+  const message = sanitizeMessage(e.message || 'error')
+  const stack = sanitizeMessage(e.stack || '')
   log.error(e)
   const msg = (
     <div className='mw240 elli wordbreak' title={message}>
