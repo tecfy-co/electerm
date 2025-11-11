@@ -13,7 +13,7 @@ export default function NoSessionPanel ({ height, onNewTab, onNewSsh, batch }) {
   const handleClick = () => {
     window.openTabBatch = batch
   }
-  const newTabDom = window.store.hasNodePty
+  const newTabDom = window.store.hasNodePty && window.store.isAdminUser
     ? (
       <Button
         onClick={onNewTab}

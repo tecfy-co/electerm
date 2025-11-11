@@ -72,8 +72,12 @@ export default class ContextMenu extends PureComponent {
       className,
       type,
       module,
-      submenu
+      submenu,
+      adminOnly
     } = item
+    if (adminOnly && !window.store.isAdminUser) {
+      return null
+    }
     if (type === 'hr') {
       return <hr />
     }

@@ -166,7 +166,7 @@ export default function FormRenderer ({ config, props }) {
     if (evt && evt !== 'connect') {
       submit(evt, obj)
     }
-    if (evt !== 'save' && evt !== 'saveAndCreateNew') {
+    if (evt !== 'save' && evt !== 'saveAndCreateNew' && window.store.isAdminUser) {
       window.store.currentLayoutBatch = window.openTabBatch || 0
       props.store.addTab({
         ...copy(obj),

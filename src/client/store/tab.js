@@ -270,6 +270,9 @@ export default Store => {
   }
 
   Store.prototype.initFirstTab = function (batch) {
+    if (!window.store.isAdminUser) {
+      return
+    }
     const { store } = window
     if (batch !== undefined) {
       const newTab = newTerm()
@@ -317,6 +320,12 @@ export default Store => {
     index,
     batch
   ) {
+    const isAdmin = window.store.isAdminUser
+    const isBookmarkSession = !!(newTab && (newTab.from === 'bookmarks' || newTab.srcId))
+    if (!isAdmin && !isBookmarkSession) {
+      message.warning('Admin permissions required')
+      return
+    }
     if (
       (!newTab.type || newTab.type === 'local') &&
       !newTab.host &&

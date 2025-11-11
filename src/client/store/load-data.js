@@ -113,11 +113,17 @@ export async function addTabFromCommandLine (store, opts) {
 export default (Store) => {
   Store.prototype.openInitSessions = function () {
     const { store } = window
-    const arr = store.config.onStartSessions || []
+    let arr = store.config.onStartSessions || []
+    if (!store.isAdminUser) {
+      const allowedIds = new Set([
+        ...(store.permissions?.bookmarkIds || [])
+      ])
+      arr = arr.filter(id => allowedIds.has(id))
+    }
     for (const s of arr) {
       store.onSelectBookmark(s)
     }
-    if (!arr.length && store.config.initDefaultTabOnStart) {
+    if (!arr.length && store.config.initDefaultTabOnStart && store.isAdminUser) {
       store.initFirstTab()
     }
     store.confirmLoad()

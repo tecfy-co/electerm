@@ -78,6 +78,9 @@ export default class Tabs extends Component {
   }
 
   handleNewTab = () => {
+    if (!window.store.isAdminUser) {
+      return
+    }
     window.store.addTab(undefined, undefined, this.props.batch)
   }
 
@@ -114,6 +117,9 @@ export default class Tabs extends Component {
     if (!e.target.className.includes('tabs-wrapper')) {
       return
     }
+    if (!window.store.isAdminUser) {
+      return
+    }
     window.store.addTab(
       undefined, undefined,
       this.props.batch
@@ -121,6 +127,9 @@ export default class Tabs extends Component {
   }
 
   handleTabAdd = () => {
+    if (!window.store.isAdminUser) {
+      return
+    }
     if (!window.store.hasNodePty) {
       window.store.onNewSsh()
       return

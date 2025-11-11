@@ -116,12 +116,13 @@ export default class Upgrade extends PureComponent {
   doUpgrade = debounce(async () => {
     const { installSrc } = this.props
     if (!isMac && !isWin && installSrc === 'npm') {
-      return window.store.addTab(
-        {
-          ...newTerm(undefined, true),
-          loginScript: 'npm i -g electerm'
-        }
-      )
+      if (!window.store.isAdminUser) {
+        return
+      }
+      return window.store.addTab({
+        ...newTerm(undefined, true),
+        loginScript: 'npm i -g electerm'
+      })
     }
     this.changeProps({
       upgrading: true

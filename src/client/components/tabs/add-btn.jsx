@@ -82,6 +82,9 @@ export default class AddBtn extends Component {
   }
 
   handleTabAdd = () => {
+    if (!window.store.isAdminUser) {
+      return
+    }
     if (!window.store.hasNodePty) {
       window.store.onNewSsh()
       return
@@ -95,7 +98,7 @@ export default class AddBtn extends Component {
   renderMenus = () => {
     const { onNewSsh } = window.store
     const cls = 'pd2x pd1y context-item pointer'
-    const addTabBtn = window.store.hasNodePty
+    const addTabBtn = window.store.hasNodePty && window.store.isAdminUser
       ? (
         <div
           className={cls}
